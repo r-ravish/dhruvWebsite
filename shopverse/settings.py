@@ -29,7 +29,7 @@ DEBUG = False
 
 ALLOWED_HOSTS = ['shopverse-ou2t.onrender.com', 'localhost']
 
-
+#hi
 
 # Application definition
 
