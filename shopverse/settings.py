@@ -26,7 +26,7 @@ SECRET_KEY = "django-insecure-brjw+2821n^oser+mvorbhkd@4^o$o_s)pb&4aaa#ed_s77!2d
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['shopverse-ou2t.onrender.com', 'localhost', '*']
+ALLOWED_HOSTS = ['shopverse-ou2t.onrender.com']
 
 #hi there
 
