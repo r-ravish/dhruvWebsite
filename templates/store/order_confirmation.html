@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Order Confirmation - ShopVerse{% endblock %}
+
+{% block content %}
+<section class="confirmation-section">
+    <div class="container">
+        <div class="confirmation-box">
+            <div class="success-icon">✓</div>
+            <h1>Order Placed Successfully!</h1>
+            <p class="order-number">Order #{{ order.id }}</p>
+            
+            <div class="order-details">
+                <h2>Order Details</h2>
+                <p><strong>Name:</strong> {{ order.full_name }}</p>
+                <p><strong>Email:</strong> {{ order.email }}</p>
+                <p><strong>Phone:</strong> {{ order.phone }}</p>
+                <p><strong>Shipping Address:</strong><br>
+                    {{ order.address }}<br>
+                    {{ order.city }}, {{ order.postal_code }}<br>
+                    {{ order.country }}
+                </p>
+                <p><strong>Status:</strong> {{ order.get_status_display }}</p>
+                <p><strong>Order Date:</strong> {{ order.created_at|date:"F d, Y" }}</p>
+            </div>
+
+            <div class="order-items">
+                <h2>Items Ordered</h2>
+                {% for item in order.items.all %}
+                    <div class="order-item">
+                        <span>{{ item.product.name }} × {{ item.quantity }}</span>
+                        <span>₹{{ item.get_subtotal }}</span>
+                    </div>
+                {% endfor %}
+                <div class="order-total">
+                    <strong>Total: ₹{{ order.get_total }}</strong>
+                </div>
+            </div>
+
+            <div class="confirmation-actions">
+                <a href="{% url 'my_orders' %}" class="btn btn-primary">View My Orders</a>
+                <a href="{% url 'product_list' %}" class="btn btn-outline">Continue Shopping</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

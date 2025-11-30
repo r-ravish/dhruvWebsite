@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Login - ShopVerse{% endblock %}
+
+{% block content %}
+<section class="auth-section">
+    <div class="container">
+        <div class="auth-box">
+            <div style="text-align: center; margin-bottom: 30px;">
+                <span style="font-size: 32px; font-weight: 800; color: #ff3f6c;">Shop<span style="color: #ff905a;">Verse</span></span>
+            </div>
+            <h1>Login</h1>
+            <form method="post" class="auth-form">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="username">Username or Email</label>
+                    <input type="text" name="username" id="username" class="form-input" placeholder="Enter username" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" name="password" id="password" class="form-input" placeholder="Enter password" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-large">Login</button>
+            </form>
+
+            <p class="auth-link">New to ShopVerse? <a href="{% url 'signup' %}">Create an account</a></p>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Buy Products Online - ShopVerse{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="{% url 'home' %}">Home</a> / Products
+            {% if current_category %} / {{ current_category }}{% endif %}
+        </div>
+        <h1>Products {% if current_category %}- {{ current_category }}{% endif %} <span style="color: #94969f; font-weight: 400;">- {{ page_obj.paginator.count }} items</span></h1>
+    </div>
+</section>
+
+<section class="products-page">
+    <div class="container">
+        <div class="products-layout">
+            <aside class="sidebar">
+                <h3>Filters</h3>
+                
+                <div class="filter-section">
+                    <h4>Categories</h4>
+                    <ul class="category-list">
+                        <li><a href="{% url 'product_list' %}" class="{% if not current_category %}active{% endif %}">All Products</a></li>
+                        {% for category in categories %}
+                            <li><a href="?category={{ category.slug }}" class="{% if current_category == category.slug %}active{% endif %}">{{ category.name }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                
+                <div class="filter-section">
+                    <h4>Search</h4>
+                    <form method="get" class="search-form">
+                        <input type="text" name="search" placeholder="Search products..." value="{{ request.GET.search }}">
+                        <button type="submit" class="btn btn-primary btn-small">Search</button>
+                    </form>
+                </div>
+            </aside>
+
+            <div class="products-main">
+                <div class="products-header">
+                    <div class="products-count">
+                        <strong>Products</strong> - {{ page_obj.paginator.count }} items
+                    </div>
+                    <div class="sort-dropdown">
+                        <select>
+                            <option>Sort by: Recommended</option>
+                            <option>Price: Low to High</option>
+                            <option>Price: High to Low</option>
+                            <option>Newest First</option>
+                        </select>
+                    </div>
+                </div>
+                
+                {% if page_obj %}
+                    <div class="products-grid">
+                        {% for product in page_obj %}
+                            <a href="{% url 'product_detail' product.slug %}" class="product-card">
+                                <div class="product-image-wrapper">
+                                    {% if product.image %}
+                                        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
+                                    {% else %}
+                                        <div class="product-image-placeholder">No Image</div>
+                                    {% endif %}
+                                    <button class="wishlist-btn" onclick="event.preventDefault();">♡</button>
+                                    <div class="product-rating">
+                                        <span class="star">★</span> 4.{{ forloop.counter }}
+                                        <span class="count">| {{ forloop.counter }}k</span>
+                                    </div>
+                                </div>
+                                <div class="product-info">
+                                    <div class="product-brand">{{ product.category.name }}</div>
+                                    <div class="product-name">{{ product.name }}</div>
+                                    <div class="product-price">
+                                        <span class="current-price">Rs. {{ product.price }}</span>
+                                        {% if product.rarity %}
+                                            <span class="discount-percent">({{ product.get_rarity_display }})</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="product-actions">
+                                    <form method="post" action="{% url 'add_to_cart' product.id %}" onclick="event.stopPropagation(); event.preventDefault();">
+                                        {% csrf_token %}
+                                        <button type="submit" class="add-to-bag-btn" onclick="this.form.submit();">Add to Bag</button>
+                                    </form>
+                                </div>
+                            </a>
+                        {% endfor %}
+                    </div>
+
+                    {% if page_obj.has_other_pages %}
+                        <div class="pagination">
+                            {% if page_obj.has_previous %}
+                                <a href="?page={{ page_obj.previous_page_number }}{% if current_category %}&category={{ current_category }}{% endif %}" class="btn btn-outline">Previous</a>
+                            {% endif %}
+                            <span class="page-info">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+                            {% if page_obj.has_next %}
+                                <a href="?page={{ page_obj.next_page_number }}{% if current_category %}&category={{ current_category }}{% endif %}" class="btn btn-outline">Next</a>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <div class="no-products">
+                        <h3>No products found</h3>
+                        <p>Try adjusting your filters or search terms</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ action }} Product - Admin{% endblock %}
+
+{% block content %}
+<section class="admin-form-section">
+    <div class="container">
+        <h1>{{ action }} Product</h1>
+
+        <form method="post" enctype="multipart/form-data" class="admin-form">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="{{ form.name.id_for_label }}">Product Name *</label>
+                {{ form.name }}
+                {% if form.name.errors %}
+                    <span class="error">{{ form.name.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.description.id_for_label }}">Description *</label>
+                {{ form.description }}
+                {% if form.description.errors %}
+                    <span class="error">{{ form.description.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="{{ form.price.id_for_label }}">Price *</label>
+                    {{ form.price }}
+                    {% if form.price.errors %}
+                        <span class="error">{{ form.price.errors.0 }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.stock.id_for_label }}">Stock *</label>
+                    {{ form.stock }}
+                    {% if form.stock.errors %}
+                        <span class="error">{{ form.stock.errors.0 }}</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.category.id_for_label }}">Category *</label>
+                {{ form.category }}
+                {% if form.category.errors %}
+                    <span class="error">{{ form.category.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="{{ form.condition.id_for_label }}">Condition</label>
+                    {{ form.condition }}
+                    {% if form.condition.errors %}
+                        <span class="error">{{ form.condition.errors.0 }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.rarity.id_for_label }}">Rarity</label>
+                    {{ form.rarity }}
+                    {% if form.rarity.errors %}
+                        <span class="error">{{ form.rarity.errors.0 }}</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.image.id_for_label }}">Product Image</label>
+                {{ form.image }}
+                {% if form.image.errors %}
+                    <span class="error">{{ form.image.errors.0 }}</span>
+                {% endif %}
+                {% if product and product.image %}
+                    <p class="current-image">Current: <img src="{{ product.image.url }}" alt="{{ product.name }}" style="max-width: 100px;"></p>
+                {% endif %}
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">{{ action }} Product</button>
+                <a href="{% url 'admin_dashboard' %}" class="btn btn-outline">Cancel</a>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

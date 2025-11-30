@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Online Shopping for Women, Men, Kids Fashion & Lifestyle - ShopVerse{% endblock %}
+
+{% block content %}
+<!-- Promo Strip -->
+<div class="promo-strip">
+    FREE SHIPPING on orders above ₹999 | Use code: SHOPVERSE20 for 20% OFF
+</div>
+
+<!-- Hero Carousel -->
+<div class="carousel-container">
+    <div class="carousel">
+        <div class="carousel-slides">
+            <div class="carousel-slide active">
+                <a href="{% url 'product_list' %}">
+                    <img src="{% static 'images/carousel/slide1.jpg' %}" alt="Sale Banner 1">
+                </a>
+            </div>
+            <div class="carousel-slide">
+                <a href="{% url 'product_list' %}">
+                    <img src="{% static 'images/carousel/slide2.jpg' %}" alt="Sale Banner 2">
+                </a>
+            </div>
+            <div class="carousel-slide">
+                <a href="{% url 'product_list' %}">
+                    <img src="{% static 'images/carousel/slide3.jpg' %}" alt="Sale Banner 3">
+                </a>
+            </div>
+            <div class="carousel-slide">
+                <a href="{% url 'product_list' %}">
+                    <img src="{% static 'images/carousel/slide4.jpg' %}" alt="Sale Banner 4">
+                </a>
+            </div>
+            <div class="carousel-slide">
+                <a href="{% url 'product_list' %}">
+                    <img src="{% static 'images/carousel/slide5.jpg' %}" alt="Sale Banner 5">
+                </a>
+            </div>
+        </div>
+        
+        <!-- Navigation Arrows -->
+        <button class="carousel-btn carousel-prev" onclick="moveCarousel(-1)">❮</button>
+        <button class="carousel-btn carousel-next" onclick="moveCarousel(1)">❯</button>
+        
+        <!-- Dots Indicator -->
+        <div class="carousel-dots">
+            <span class="dot active" onclick="goToSlide(0)"></span>
+            <span class="dot" onclick="goToSlide(1)"></span>
+            <span class="dot" onclick="goToSlide(2)"></span>
+            <span class="dot" onclick="goToSlide(3)"></span>
+            <span class="dot" onclick="goToSlide(4)"></span>
+        </div>
+    </div>
+</div>
+
+<!-- Section Header -->
+<div class="section-header">
+    <h2>Trending Now</h2>
+    <p>Discover the latest products handpicked for you</p>
+</div>
+
+<!-- Featured Products -->
+<section class="products-section">
+    <div class="container">
+        {% if featured_products %}
+            <div class="products-grid">
+                {% for product in featured_products %}
+                    <a href="{% url 'product_detail' product.slug %}" class="product-card">
+                        <div class="product-image-wrapper">
+                            {% if product.image %}
+                                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
+                            {% else %}
+                                <div class="product-image-placeholder">No Image</div>
+                            {% endif %}
+                            <button class="wishlist-btn">♡</button>
+                            <div class="product-rating">
+                                <span class="star">★</span> 4.2
+                                <span class="count">| 1.2k</span>
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <div class="product-brand">{{ product.category.name }}</div>
+                            <div class="product-name">{{ product.name }}</div>
+                            <div class="product-price">
+                                <span class="current-price">Rs. {{ product.price }}</span>
+                                {% if product.rarity %}
+                                    <span class="discount-percent">({{ product.get_rarity_display }})</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="product-actions">
+                            <form method="post" action="{% url 'add_to_cart' product.id %}" onclick="event.stopPropagation();">
+                                {% csrf_token %}
+                                <button type="submit" class="add-to-bag-btn">Add to Bag</button>
+                            </form>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+            
+            <div style="text-align: center; margin-top: 40px;">
+                <a href="{% url 'product_list' %}" class="btn btn-outline btn-large">Explore All Products</a>
+            </div>
+        {% else %}
+            <div class="no-products">
+                <h3>No products available yet</h3>
+                <p>Check back soon or add products via the admin panel!</p>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

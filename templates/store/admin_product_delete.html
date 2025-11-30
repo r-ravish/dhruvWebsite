@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Delete Product - Admin{% endblock %}
+
+{% block content %}
+<section class="admin-form-section">
+    <div class="container">
+        <div class="delete-confirmation">
+            <h1>Delete Product</h1>
+            <p>Are you sure you want to delete <strong>{{ product.name }}</strong>?</p>
+            <p class="warning">This action cannot be undone.</p>
+
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                    <a href="{% url 'admin_dashboard' %}" class="btn btn-outline">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

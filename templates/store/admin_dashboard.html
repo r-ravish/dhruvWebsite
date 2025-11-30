@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Admin Dashboard - ShopVerse{% endblock %}
+
+{% block content %}
+<section class="admin-section">
+    <div class="container">
+        <h1>Admin Dashboard</h1>
+
+        <div class="admin-actions">
+            <a href="{% url 'admin_product_add' %}" class="btn btn-primary">Add New Product</a>
+            <a href="/admin/" class="btn btn-outline">Django Admin</a>
+        </div>
+
+        <div class="admin-section-box">
+            <h2>Products</h2>
+            <div class="table-responsive">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Price</th>
+                            <th>Stock</th>
+                            <th>Category</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in products %}
+                            <tr>
+                                <td>{{ product.id }}</td>
+                                <td>{{ product.name }}</td>
+                                <td>₹{{ product.price }}</td>
+                                <td>{{ product.stock }}</td>
+                                <td>{{ product.category.name }}</td>
+                                <td class="action-buttons">
+                                    <a href="{% url 'admin_product_edit' product.id %}" class="btn btn-small btn-secondary">Edit</a>
+                                    <a href="{% url 'admin_product_delete' product.id %}" class="btn btn-small btn-danger">Delete</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="admin-section-box">
+            <h2>Recent Orders</h2>
+            <div class="table-responsive">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Order #</th>
+                            <th>Customer</th>
+                            <th>Email</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders %}
+                            <tr>
+                                <td>#{{ order.id }}</td>
+                                <td>{{ order.full_name }}</td>
+                                <td>{{ order.email }}</td>
+                                <td>₹{{ order.get_total }}</td>
+                                <td>
+                                    <span class="status-badge status-{{ order.status }}">{{ order.get_status_display }}</span>
+                                </td>
+                                <td>{{ order.created_at|date:"M d, Y" }}</td>
+                                <td>
+                                    <form method="post" action="{% url 'admin_order_update' order.id %}" class="inline-form">
+                                        {% csrf_token %}
+                                        <select name="status" class="status-select" onchange="this.form.submit()">
+                                            {% for value, label in order.STATUS_CHOICES %}
+                                                <option value="{{ value }}" {% if order.status == value %}selected{% endif %}>{{ label }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ product.name }} - Buy Online at ShopVerse{% endblock %}
+
+{% block content %}
+<section class="product-detail">
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="{% url 'home' %}">Home</a> / 
+            <a href="{% url 'product_list' %}">Products</a> / 
+            <a href="?category={{ product.category.slug }}">{{ product.category.name }}</a> / 
+            {{ product.name }}
+        </div>
+        
+        <div class="product-detail-layout">
+            <div class="product-gallery">
+                {% if product.image %}
+                    <div class="gallery-image">
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                    </div>
+                    <div class="gallery-image">
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                    </div>
+                {% else %}
+                    <div class="detail-image-placeholder">No Image Available</div>
+                {% endif %}
+            </div>
+
+            <div class="product-info-section">
+                <h1>{{ product.category.name }}</h1>
+                <p class="product-subtitle">{{ product.name }}</p>
+                
+                <div class="product-rating-large">
+                    <span class="star">★</span> 4.2
+                    <span style="color: #94969f;">|</span>
+                    <span style="color: #94969f;">1.2k Ratings</span>
+                </div>
+                
+                <div class="price-section">
+                    <span class="price-large">Rs. {{ product.price }}</span>
+                    <span class="mrp-label">MRP <span class="mrp-price">Rs. {{ product.price }}</span></span>
+                    <span class="tax-info">inclusive of all taxes</span>
+                </div>
+                
+                {% if product.stock > 0 %}
+                    <form method="post" action="{% url 'add_to_cart' product.id %}">
+                        {% csrf_token %}
+                        
+                        <div class="quantity-selector">
+                            <label for="quantity">Quantity:</label>
+                            <input type="number" name="quantity" id="quantity" value="1" min="1" max="{{ product.stock }}" class="quantity-input">
+                            <span style="color: #03a685; font-size: 14px; margin-left: 10px;">{{ product.stock }} in stock</span>
+                        </div>
+                        
+                        <div class="action-buttons">
+                            <button type="submit" class="btn-add-bag">
+                                🛒 Add to Bag
+                            </button>
+                            <button type="button" class="btn-wishlist">
+                                ♡ Wishlist
+                            </button>
+                        </div>
+                    </form>
+                {% else %}
+                    <div class="action-buttons">
+                        <button class="btn-add-bag" disabled style="opacity: 0.5; cursor: not-allowed;">
+                            Out of Stock
+                        </button>
+                    </div>
+                {% endif %}
+                
+                <div class="delivery-section">
+                    <h3>Delivery Options</h3>
+                    <div class="pincode-check">
+                        <input type="text" placeholder="Enter pincode">
+                        <button class="btn btn-outline btn-small">Check</button>
+                    </div>
+                    <p style="margin-top: 10px; font-size: 13px; color: #94969f;">Please enter PIN code to check delivery time & Pay on Delivery Availability</p>
+                </div>
+                
+                <div class="product-description">
+                    <h3>Product Details</h3>
+                    <p>{{ product.description }}</p>
+                    
+                    <div class="product-meta">
+                        <p><strong>Category:</strong> {{ product.category.name }}</p>
+                        {% if product.condition %}
+                            <p><strong>Condition:</strong> {{ product.get_condition_display }}</p>
+                        {% endif %}
+                        {% if product.rarity %}
+                            <p><strong>Rarity:</strong> {{ product.get_rarity_display }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

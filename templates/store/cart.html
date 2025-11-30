@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Shopping Bag - ShopVerse{% endblock %}
+
+{% block content %}
+<section class="cart-section">
+    <div class="container">
+        {% if cart %}
+            <h1>My Bag <span style="font-weight: 400; color: #94969f;">{{ cart.get_total_quantity }} item(s)</span></h1>
+            
+            <div class="cart-layout">
+                <div class="cart-items">
+                    {% for item in cart %}
+                        <div class="cart-item">
+                            <div class="cart-item-image">
+                                {% if item.product.image %}
+                                    <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+                                {% else %}
+                                    <div class="product-image-placeholder">No Image</div>
+                                {% endif %}
+                            </div>
+                            <div class="cart-item-details">
+                                <div class="cart-item-brand">{{ item.product.category.name }}</div>
+                                <div class="cart-item-name">{{ item.product.name }}</div>
+                                <div class="cart-item-size">Sold by: ShopVerse</div>
+                                
+                                <div class="cart-item-price">
+                                    <span class="current">Rs. {{ item.total_price }}</span>
+                                </div>
+                                
+                                <div class="quantity-controls">
+                                    <form method="post" action="{% url 'update_cart' item.product.id %}" style="display: flex; align-items: center; gap: 10px;">
+                                        {% csrf_token %}
+                                        <button type="button" class="qty-btn" onclick="decrementQty(this)">−</button>
+                                        <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="{{ item.product.stock }}" class="qty-value">
+                                        <button type="button" class="qty-btn" onclick="incrementQty(this)">+</button>
+                                        <button type="submit" class="btn btn-small btn-outline">Update</button>
+                                    </form>
+                                </div>
+                                
+                                <div class="cart-item-actions">
+                                    <form method="post" action="{% url 'remove_from_cart' item.product.id %}" style="display: inline;">
+                                        {% csrf_token %}
+                                        <button type="submit">Remove</button>
+                                    </form>
+                                    <button>Move to Wishlist</button>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <div class="cart-summary">
+                    <h2>Price Details ({{ cart.get_total_quantity }} Item{% if cart.get_total_quantity > 1 %}s{% endif %})</h2>
+                    
+                    <div class="summary-row">
+                        <span>Total MRP</span>
+                        <span>Rs. {{ cart.get_total_price }}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Discount on MRP</span>
+                        <span class="discount">-Rs. 0</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Convenience Fee</span>
+                        <span class="discount">FREE</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span>Total Amount</span>
+                        <span>Rs. {{ cart.get_total_price }}</span>
+                    </div>
+                    
+                    <a href="{% url 'checkout' %}" class="place-order-btn">Place Order</a>
+                </div>
+            </div>
+        {% else %}
+            <div class="empty-cart">
+                <div class="empty-cart-icon">🛒</div>
+                <h2>Hey, it feels so light!</h2>
+                <p>There is nothing in your bag. Let's add some items.</p>
+                <a href="{% url 'product_list' %}" class="btn btn-primary btn-large">Continue Shopping</a>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
