@@ -13,7 +13,6 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 import os
 
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -27,9 +26,9 @@ SECRET_KEY = "django-insecure-brjw+2821n^oser+mvorbhkd@4^o$o_s)pb&4aaa#ed_s77!2d
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['shopverse-ou2t.onrender.com', 'localhost']
+ALLOWED_HOSTS = ['shopverse-ou2t.onrender.com', 'localhost', '*']
 
-#hi
+#hi there
 
 # Application definition
 
