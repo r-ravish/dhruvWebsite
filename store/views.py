@@ -4,13 +4,18 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from django.core.paginator import Paginator
 from django.db.models import Q
+from django.conf import settings
 from .models import Product, Category, Order, OrderItem
-from .forms import SignUpForm, CheckoutForm, ProductForm
+from .forms import SignUpForm, CheckoutForm, ProductForm, TransactionForm
 from .cart import Cart
 
 def home(request):
     featured_products = Product.objects.filter(stock__gt=0)[:6]
-    return render(request, 'store/home.html', {'featured_products': featured_products})
+    categories = Category.objects.all()
+    return render(request, 'store/home.html', {
+        'featured_products': featured_products,
+        'categories': categories
+    })
 
 def product_list(request):
     products = Product.objects.filter(stock__gt=0)
@@ -96,6 +101,15 @@ def checkout(request):
         if form.is_valid():
             order = form.save(commit=False)
             order.user = request.user
+            
+            # Set status based on payment method
+            if order.payment_method == 'cod':
+                order.status = 'confirmed'
+                order.payment_status = 'pending'
+            else:  # UPI
+                order.status = 'payment_pending'
+                order.payment_status = 'pending'
+            
             order.save()
             
             for item in cart:
@@ -110,16 +124,53 @@ def checkout(request):
                 product.save()
             
             cart.clear()
-            messages.success(request, f'Order #{order.id} placed successfully!')
-            return redirect('order_confirmation', order_id=order.id)
+            
+            # Redirect based on payment method
+            if order.payment_method == 'upi':
+                return redirect('payment', order_id=order.id)
+            else:
+                messages.success(request, f'Order #{order.id} placed successfully! Pay ₹{order.get_total()} on delivery.')
+                return redirect('order_confirmation', order_id=order.id)
     else:
         initial_data = {
             'full_name': request.user.get_full_name() or request.user.username,
             'email': request.user.email,
+            'country': 'India',
         }
         form = CheckoutForm(initial=initial_data)
     
     return render(request, 'store/checkout.html', {'form': form, 'cart': cart})
+
+@login_required
+def payment(request, order_id):
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+    
+    # Only allow payment for pending UPI orders
+    if order.payment_method != 'upi' or order.payment_status == 'verified':
+        return redirect('order_confirmation', order_id=order.id)
+    
+    if request.method == 'POST':
+        form = TransactionForm(request.POST)
+        if form.is_valid():
+            order.transaction_id = form.cleaned_data['transaction_id']
+            order.payment_status = 'awaiting_verification'
+            order.status = 'confirmed'
+            order.save()
+            messages.success(request, f'Transaction ID submitted! Your order #{order.id} is being processed.')
+            return redirect('order_confirmation', order_id=order.id)
+    else:
+        form = TransactionForm()
+    
+    # UPI details for payment (you can update these)
+    upi_id = getattr(settings, 'UPI_ID', 'shopverse@upi')
+    upi_name = getattr(settings, 'UPI_NAME', 'ShopVerse Store')
+    
+    return render(request, 'store/payment.html', {
+        'order': order,
+        'form': form,
+        'upi_id': upi_id,
+        'upi_name': upi_name,
+    })
 
 @login_required
 def order_confirmation(request, order_id):
@@ -236,10 +287,16 @@ def admin_order_update(request, order_id):
     order = get_object_or_404(Order, id=order_id)
     
     if request.method == 'POST':
-        status = request.POST.get('status')
-        if status in dict(Order.STATUS_CHOICES):
-            order.status = status
+        # Handle payment verification
+        if request.POST.get('verify_payment') == 'true':
+            order.payment_status = 'verified'
             order.save()
-            messages.success(request, f'Order #{order.id} status updated to {order.get_status_display()}.')
+            messages.success(request, f'Payment verified for Order #{order.id}.')
+        else:
+            status = request.POST.get('status')
+            if status in dict(Order.STATUS_CHOICES):
+                order.status = status
+                order.save()
+                messages.success(request, f'Order #{order.id} status updated to {order.get_status_display()}.')
     
     return redirect('admin_dashboard')

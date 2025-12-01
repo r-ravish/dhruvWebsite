@@ -58,13 +58,21 @@ class Product(models.Model):
 class Order(models.Model):
     STATUS_CHOICES = [
         ('pending', 'Pending'),
+        ('payment_pending', 'Payment Pending'),
+        ('confirmed', 'Confirmed'),
         ('shipped', 'Shipped'),
         ('completed', 'Completed'),
         ('cancelled', 'Cancelled'),
     ]
     PAYMENT_METHOD_CHOICES = [
         ('cod', 'Cash on Delivery'),
-        ('prepaid', 'Prepaid'),
+        ('upi', 'UPI Payment'),
+    ]
+    PAYMENT_STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('awaiting_verification', 'Awaiting Verification'),
+        ('verified', 'Verified'),
+        ('failed', 'Failed'),
     ]
     
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='orders')
@@ -76,6 +84,8 @@ class Order(models.Model):
     postal_code = models.CharField(max_length=20)
     country = models.CharField(max_length=100)
     payment_method = models.CharField(max_length=20, choices=PAYMENT_METHOD_CHOICES, default='cod')
+    payment_status = models.CharField(max_length=30, choices=PAYMENT_STATUS_CHOICES, default='pending')
+    transaction_id = models.CharField(max_length=100, blank=True, null=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     created_at = models.DateTimeField(auto_now_add=True)
     

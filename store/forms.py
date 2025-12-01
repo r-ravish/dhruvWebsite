@@ -18,7 +18,7 @@ class SignUpForm(UserCreationForm):
 class CheckoutForm(forms.ModelForm):
     class Meta:
         model = Order
-        fields = ['full_name', 'email', 'phone', 'address', 'city', 'postal_code', 'country']
+        fields = ['full_name', 'email', 'phone', 'address', 'city', 'postal_code', 'country', 'payment_method']
         widgets = {
             'full_name': forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'Full Name'}),
             'email': forms.EmailInput(attrs={'class': 'form-input', 'placeholder': 'Email'}),
@@ -27,7 +27,18 @@ class CheckoutForm(forms.ModelForm):
             'city': forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'City'}),
             'postal_code': forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'Postal Code'}),
             'country': forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'Country'}),
+            'payment_method': forms.RadioSelect(attrs={'class': 'payment-radio'}),
         }
+
+class TransactionForm(forms.Form):
+    transaction_id = forms.CharField(
+        max_length=100,
+        widget=forms.TextInput(attrs={
+            'class': 'form-input',
+            'placeholder': 'Enter UPI Transaction ID / UTR Number'
+        }),
+        label='Transaction ID'
+    )
 
 class ProductForm(forms.ModelForm):
     class Meta:

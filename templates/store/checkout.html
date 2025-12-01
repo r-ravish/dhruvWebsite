@@ -6,91 +6,600 @@
 {% block content %}
 <section class="checkout-section">
     <div class="container">
-        <h1>Checkout</h1>
+        <!-- Progress Steps -->
+        <div class="checkout-steps">
+            <div class="step active">
+                <span class="step-number">1</span>
+                <span class="step-text">Address & Payment</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="step">
+                <span class="step-number">2</span>
+                <span class="step-text">Payment</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="step">
+                <span class="step-number">3</span>
+                <span class="step-text">Confirmation</span>
+            </div>
+        </div>
 
         <div class="checkout-layout">
             <div class="checkout-form">
-                <h2>Shipping Information</h2>
                 <form method="post" id="checkoutForm">
                     {% csrf_token %}
-                    <div class="form-group">
-                        <label for="{{ form.full_name.id_for_label }}">Full Name *</label>
-                        {{ form.full_name }}
-                        {% if form.full_name.errors %}
-                            <span class="error">{{ form.full_name.errors.0 }}</span>
-                        {% endif %}
-                    </div>
+                    
+                    <!-- Delivery Address Section -->
+                    <div class="checkout-section-box">
+                        <h2><span class="section-number">1</span> Delivery Address</h2>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="{{ form.full_name.id_for_label }}">Full Name *</label>
+                                {{ form.full_name }}
+                                {% if form.full_name.errors %}
+                                    <span class="error">{{ form.full_name.errors.0 }}</span>
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                <label for="{{ form.phone.id_for_label }}">Phone *</label>
+                                {{ form.phone }}
+                                {% if form.phone.errors %}
+                                    <span class="error">{{ form.phone.errors.0 }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
 
-                    <div class="form-group">
-                        <label for="{{ form.email.id_for_label }}">Email *</label>
-                        {{ form.email }}
-                        {% if form.email.errors %}
-                            <span class="error">{{ form.email.errors.0 }}</span>
-                        {% endif %}
-                    </div>
-
-                    <div class="form-group">
-                        <label for="{{ form.phone.id_for_label }}">Phone *</label>
-                        {{ form.phone }}
-                        {% if form.phone.errors %}
-                            <span class="error">{{ form.phone.errors.0 }}</span>
-                        {% endif %}
-                    </div>
-
-                    <div class="form-group">
-                        <label for="{{ form.address.id_for_label }}">Address *</label>
-                        {{ form.address }}
-                        {% if form.address.errors %}
-                            <span class="error">{{ form.address.errors.0 }}</span>
-                        {% endif %}
-                    </div>
-
-                    <div class="form-row">
                         <div class="form-group">
-                            <label for="{{ form.city.id_for_label }}">City *</label>
-                            {{ form.city }}
-                            {% if form.city.errors %}
-                                <span class="error">{{ form.city.errors.0 }}</span>
+                            <label for="{{ form.email.id_for_label }}">Email *</label>
+                            {{ form.email }}
+                            {% if form.email.errors %}
+                                <span class="error">{{ form.email.errors.0 }}</span>
                             {% endif %}
                         </div>
 
                         <div class="form-group">
-                            <label for="{{ form.postal_code.id_for_label }}">Postal Code *</label>
-                            {{ form.postal_code }}
-                            {% if form.postal_code.errors %}
-                                <span class="error">{{ form.postal_code.errors.0 }}</span>
+                            <label for="{{ form.address.id_for_label }}">Address (House No, Building, Street) *</label>
+                            {{ form.address }}
+                            {% if form.address.errors %}
+                                <span class="error">{{ form.address.errors.0 }}</span>
                             {% endif %}
+                        </div>
+
+                        <div class="form-row form-row-3">
+                            <div class="form-group">
+                                <label for="{{ form.city.id_for_label }}">City *</label>
+                                {{ form.city }}
+                                {% if form.city.errors %}
+                                    <span class="error">{{ form.city.errors.0 }}</span>
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                <label for="{{ form.postal_code.id_for_label }}">PIN Code *</label>
+                                {{ form.postal_code }}
+                                {% if form.postal_code.errors %}
+                                    <span class="error">{{ form.postal_code.errors.0 }}</span>
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                <label for="{{ form.country.id_for_label }}">Country *</label>
+                                {{ form.country }}
+                                {% if form.country.errors %}
+                                    <span class="error">{{ form.country.errors.0 }}</span>
+                                {% endif %}
+                            </div>
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="{{ form.country.id_for_label }}">Country *</label>
-                        {{ form.country }}
-                        {% if form.country.errors %}
-                            <span class="error">{{ form.country.errors.0 }}</span>
-                        {% endif %}
+                    <!-- Payment Method Section -->
+                    <div class="checkout-section-box">
+                        <h2><span class="section-number">2</span> Payment Method</h2>
+                        
+                        <div class="payment-methods">
+                            {% for radio in form.payment_method %}
+                                <label class="payment-option {% if radio.data.value == 'cod' %}cod-option{% else %}upi-option{% endif %}">
+                                    {{ radio.tag }}
+                                    <div class="payment-option-content">
+                                        {% if radio.data.value == 'cod' %}
+                                            <div class="payment-icon">💵</div>
+                                            <div class="payment-details">
+                                                <span class="payment-title">Cash on Delivery</span>
+                                                <span class="payment-desc">Pay when your order arrives</span>
+                                            </div>
+                                        {% else %}
+                                            <div class="payment-icon">📱</div>
+                                            <div class="payment-details">
+                                                <span class="payment-title">UPI Payment</span>
+                                                <span class="payment-desc">Pay via GPay, PhonePe, Paytm etc.</span>
+                                                <span class="payment-badge">Recommended</span>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </label>
+                            {% endfor %}
+                        </div>
+                        
+                        <div id="cod-info" class="payment-info-box" style="display: none;">
+                            <p><strong>Cash on Delivery:</strong> Pay ₹{{ cart.get_total_price }} when your order arrives.</p>
+                        </div>
+                        
+                        <div id="upi-info" class="payment-info-box" style="display: none;">
+                            <p><strong>UPI Payment:</strong> You'll be shown a QR code to scan and pay. After payment, enter your Transaction ID to confirm.</p>
+                        </div>
                     </div>
 
-                    <button type="submit" class="btn btn-primary btn-large">Place Order</button>
+                    <button type="submit" class="btn btn-primary btn-large btn-place-order">
+                        <span id="btn-text">Place Order</span>
+                        <span class="btn-amount">₹{{ cart.get_total_price }}</span>
+                    </button>
                 </form>
             </div>
 
+            <!-- Order Summary Sidebar -->
             <div class="order-summary">
-                <h2>Order Summary</h2>
+                <div class="summary-header">
+                    <h2>Order Summary</h2>
+                    <span class="item-count">{{ cart|length }} Item(s)</span>
+                </div>
+                
                 <div class="summary-items">
                     {% for item in cart %}
                         <div class="summary-item">
-                            <span>{{ item.product.name }} × {{ item.quantity }}</span>
-                            <span>₹{{ item.total_price }}</span>
+                            <div class="item-image">
+                                {% if item.product.image %}
+                                    <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+                                {% else %}
+                                    <div class="no-image">📦</div>
+                                {% endif %}
+                            </div>
+                            <div class="item-details">
+                                <span class="item-name">{{ item.product.name }}</span>
+                                <span class="item-qty">Qty: {{ item.quantity }}</span>
+                            </div>
+                            <span class="item-price">₹{{ item.total_price }}</span>
                         </div>
                     {% endfor %}
                 </div>
+                
+                <div class="summary-breakdown">
+                    <div class="breakdown-row">
+                        <span>Subtotal</span>
+                        <span>₹{{ cart.get_total_price }}</span>
+                    </div>
+                    <div class="breakdown-row">
+                        <span>Delivery</span>
+                        <span class="free-delivery">FREE</span>
+                    </div>
+                </div>
+                
                 <div class="summary-total">
-                    <span>Total:</span>
+                    <span>Total Amount</span>
                     <span>₹{{ cart.get_total_price }}</span>
+                </div>
+                
+                <div class="secure-badge">
+                    🔒 Safe and Secure Payments
                 </div>
             </div>
         </div>
     </div>
 </section>
+
+<style>
+.checkout-section {
+    padding: 30px 0;
+    background: #f5f5f6;
+    min-height: calc(100vh - 200px);
+}
+
+.checkout-steps {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 30px;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+}
+
+.step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.step-number {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #e0e0e0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    color: #666;
+}
+
+.step.active .step-number {
+    background: #ff3f6c;
+    color: white;
+}
+
+.step-text {
+    font-size: 13px;
+    color: #666;
+}
+
+.step.active .step-text {
+    color: #282c3f;
+    font-weight: 500;
+}
+
+.step-line {
+    width: 100px;
+    height: 2px;
+    background: #e0e0e0;
+    margin: 0 10px;
+}
+
+.checkout-layout {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 30px;
+    align-items: start;
+}
+
+.checkout-section-box {
+    background: white;
+    border-radius: 8px;
+    padding: 25px;
+    margin-bottom: 20px;
+}
+
+.checkout-section-box h2 {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 18px;
+    color: #282c3f;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.section-number {
+    width: 28px;
+    height: 28px;
+    background: #ff3f6c;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.form-row-3 {
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #282c3f;
+}
+
+.form-input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #d4d5d9;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border-color 0.2s;
+}
+
+.form-input:focus {
+    border-color: #ff3f6c;
+    outline: none;
+}
+
+.error {
+    color: #ff3f6c;
+    font-size: 12px;
+    margin-top: 4px;
+    display: block;
+}
+
+/* Payment Methods */
+.payment-methods {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.payment-option {
+    display: flex;
+    align-items: center;
+    padding: 18px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.payment-option:hover {
+    border-color: #ff3f6c;
+    background: #fff5f7;
+}
+
+.payment-option input[type="radio"] {
+    width: 20px;
+    height: 20px;
+    margin-right: 15px;
+    accent-color: #ff3f6c;
+}
+
+.payment-option input[type="radio"]:checked + .payment-option-content {
+    opacity: 1;
+}
+
+.payment-option:has(input:checked) {
+    border-color: #ff3f6c;
+    background: #fff5f7;
+}
+
+.payment-option-content {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex: 1;
+}
+
+.payment-icon {
+    font-size: 28px;
+}
+
+.payment-details {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.payment-title {
+    font-weight: 600;
+    color: #282c3f;
+    font-size: 15px;
+}
+
+.payment-desc {
+    color: #94969f;
+    font-size: 13px;
+}
+
+.payment-badge {
+    display: inline-block;
+    background: #14958f;
+    color: white;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 3px;
+    margin-top: 4px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.payment-info-box {
+    margin-top: 15px;
+    padding: 12px 15px;
+    background: #f0f8ff;
+    border-radius: 6px;
+    font-size: 13px;
+    color: #282c3f;
+}
+
+.btn-place-order {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    font-size: 16px;
+}
+
+.btn-amount {
+    font-weight: 700;
+}
+
+/* Order Summary */
+.order-summary {
+    background: white;
+    border-radius: 8px;
+    padding: 25px;
+    position: sticky;
+    top: 20px;
+}
+
+.summary-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.summary-header h2 {
+    font-size: 18px;
+    color: #282c3f;
+}
+
+.item-count {
+    color: #94969f;
+    font-size: 14px;
+}
+
+.summary-items {
+    max-height: 250px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+}
+
+.summary-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.item-image {
+    width: 50px;
+    height: 50px;
+    border-radius: 4px;
+    overflow: hidden;
+    background: #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.item-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.no-image {
+    font-size: 24px;
+}
+
+.item-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.item-name {
+    font-size: 14px;
+    color: #282c3f;
+    font-weight: 500;
+}
+
+.item-qty {
+    font-size: 12px;
+    color: #94969f;
+}
+
+.item-price {
+    font-weight: 600;
+    color: #282c3f;
+}
+
+.summary-breakdown {
+    padding: 15px 0;
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+}
+
+.breakdown-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    font-size: 14px;
+    color: #666;
+}
+
+.free-delivery {
+    color: #14958f;
+    font-weight: 500;
+}
+
+.summary-total {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #282c3f;
+}
+
+.secure-badge {
+    text-align: center;
+    padding: 12px;
+    background: #f0f8f0;
+    border-radius: 6px;
+    font-size: 13px;
+    color: #14958f;
+    margin-top: 15px;
+}
+
+@media (max-width: 900px) {
+    .checkout-layout {
+        grid-template-columns: 1fr;
+    }
+    
+    .order-summary {
+        position: static;
+    }
+    
+    .form-row, .form-row-3 {
+        grid-template-columns: 1fr;
+    }
+    
+    .checkout-steps {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    
+    .step-line {
+        width: 40px;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const paymentRadios = document.querySelectorAll('input[name="payment_method"]');
+    const codInfo = document.getElementById('cod-info');
+    const upiInfo = document.getElementById('upi-info');
+    const btnText = document.getElementById('btn-text');
+    
+    function updatePaymentInfo() {
+        const selected = document.querySelector('input[name="payment_method"]:checked');
+        if (selected) {
+            if (selected.value === 'cod') {
+                codInfo.style.display = 'block';
+                upiInfo.style.display = 'none';
+                btnText.textContent = 'Place Order (Pay on Delivery)';
+            } else {
+                codInfo.style.display = 'none';
+                upiInfo.style.display = 'block';
+                btnText.textContent = 'Continue to Payment';
+            }
+        }
+    }
+    
+    paymentRadios.forEach(radio => {
+        radio.addEventListener('change', updatePaymentInfo);
+    });
+    
+    // Initial state
+    updatePaymentInfo();
+});
+</script>
 {% endblock %}

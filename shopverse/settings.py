@@ -149,6 +149,11 @@ LOGOUT_REDIRECT_URL = '/'
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# UPI Payment Configuration
+# Update these with your actual UPI details
+UPI_ID = os.environ.get('UPI_ID', 'shopverse@upi')
+UPI_NAME = os.environ.get('UPI_NAME', 'ShopVerse Store')
+
 
 
 

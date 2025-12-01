@@ -55,6 +55,38 @@
     </div>
 </div>
 
+<!-- Categories Section -->
+{% if categories %}
+<section class="categories-section">
+    <div class="container">
+        <div class="section-header">
+            <h2>Shop by Category</h2>
+            <p>Browse products by category</p>
+        </div>
+        <div class="categories-grid">
+            {% for category in categories %}
+                <a href="{% url 'product_list' %}?category={{ category.slug }}" class="category-card">
+                    <div class="category-icon">
+                        {% if 'card' in category.name|lower %}🃏
+                        {% elif 'toy' in category.name|lower %}🧸
+                        {% elif 'game' in category.name|lower %}🎮
+                        {% elif 'book' in category.name|lower %}📚
+                        {% elif 'electronic' in category.name|lower %}📱
+                        {% elif 'cloth' in category.name|lower or 'fashion' in category.name|lower %}👕
+                        {% elif 'sport' in category.name|lower %}⚽
+                        {% elif 'home' in category.name|lower %}🏠
+                        {% else %}📦
+                        {% endif %}
+                    </div>
+                    <span class="category-name">{{ category.name }}</span>
+                    <span class="category-count">{{ category.products.count }} Products</span>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
 <!-- Section Header -->
 <div class="section-header">
     <h2>Trending Now</h2>

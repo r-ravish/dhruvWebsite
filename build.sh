@@ -26,3 +26,29 @@ elif User.objects.filter(username=username).exists():
 else:
     print('DJANGO_SUPERUSER_PASSWORD not set, skipping superuser creation')
 "
+
+# Create default categories if they don't exist
+python manage.py shell -c "
+from store.models import Category
+
+default_categories = [
+    ('Trading Cards', 'trading-cards'),
+    ('Collectible Toys', 'collectible-toys'),
+    ('Board Games', 'board-games'),
+    ('Video Games', 'video-games'),
+    ('Comics & Books', 'comics-books'),
+    ('Figures & Statues', 'figures-statues'),
+]
+
+for name, slug in default_categories:
+    category, created = Category.objects.get_or_create(
+        slug=slug,
+        defaults={'name': name}
+    )
+    if created:
+        print(f'Created category: {name}')
+    else:
+        print(f'Category exists: {name}')
+"
+
+echo "Build completed successfully!"
