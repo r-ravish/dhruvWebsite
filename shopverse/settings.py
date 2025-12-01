@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "cloudinary_storage",
+    "cloudinary",
     "store",
 ]
 
@@ -153,6 +155,18 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # Update these with your actual UPI details
 UPI_ID = os.environ.get('UPI_ID', 'shopverse@upi')
 UPI_NAME = os.environ.get('UPI_NAME', 'ShopVerse Store')
+
+# Cloudinary Configuration for Media Storage
+# Sign up at https://cloudinary.com (free tier available)
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME', ''),
+    'API_KEY': os.environ.get('CLOUDINARY_API_KEY', ''),
+    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET', ''),
+}
+
+# Use Cloudinary for media files in production
+if os.environ.get('CLOUDINARY_CLOUD_NAME'):
+    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 
 
