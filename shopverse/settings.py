@@ -133,6 +133,9 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # Use simpler whitenoise storage that works with DEBUG=True/False
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
+# Allow whitenoise to serve files from STATICFILES_DIRS (needed for DEBUG=True)
+WHITENOISE_USE_FINDERS = True
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
